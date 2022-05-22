@@ -1,6 +1,7 @@
 package game;
 
 import classes.Pilha;
+import classes.ScoreSetter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,8 @@ public class Game {
     private Integer numeroJogadas = 0;
 
     private String nomeJogador = "";
+
+    private ScoreSetter scoreSetter = new ScoreSetter();
 
     private Game() {
         this.perguntarQtdeEPopularPilhas();
@@ -69,21 +72,18 @@ public class Game {
     }
 
     private void encerrarJogo() {
-        System.out.println(String.format("Parabéns, você venceu! Foram necessarias apenas %d", this.numeroJogadas));
-        System.out.println("Deseja salvar um recorde? (S/N)");
-        String resposta = this.teclado.nextLine();
-        while(!resposta.equalsIgnoreCase("S") || !resposta.equalsIgnoreCase("N")) {
-            System.out.println("\nNão entendi sua resposta, tente novamente!");
-            System.out.print("(S/N)> ");
+        System.out.println(String.format("Parabéns, você venceu! Foram necessarias apenas %d jogadas!", this.numeroJogadas));
+        String resposta;
+        do {
+            System.out.print("\nDeseja salvar um recorde? (S/N): ");
             resposta = this.teclado.nextLine();
         }
+        while(!resposta.equalsIgnoreCase("S") && !resposta.equalsIgnoreCase("N"));
         if (resposta.equalsIgnoreCase("S")) {
             System.out.print("\nPor favor, escreva seu nome: ");
             this.nomeJogador = this.teclado.nextLine();
-            System.out.println(String.format("Jogador: %s \nJogadas: %d", this.nomeJogador, this.numeroJogadas));
+            this.scoreSetter.registrarNovoJogador(this.nomeJogador, this.numeroJogadas);
         }
-
-        //TODO salvar o recorde dos usuarios em um arquivo txt para poder manipular depois
     }
 
     private void realizarJogada() {
