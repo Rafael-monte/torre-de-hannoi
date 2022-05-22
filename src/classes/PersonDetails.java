@@ -26,7 +26,7 @@ public class PersonDetails {
 
 
     public String getPlayerDetailsAsLine() {
-        return String.format("\n- %s: %d *(Jogo finalizado em %s)*\n", this.nomeJogador, this.numeroJogadas, toDDMMYYYY(this.dataFinalJogo));
+        return String.format("\n- %s: %d jogadas *(Jogo finalizado em %s)*\n", this.nomeJogador, this.numeroJogadas, toDDMMYYYY(this.dataFinalJogo));
     }
 
     private String toDDMMYYYY(LocalDate dataFinalJogo) {
