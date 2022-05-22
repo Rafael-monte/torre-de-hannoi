@@ -56,7 +56,7 @@ public class Pilha {
                 System.out.print(this.elementos.get(i));
             }
         }
-        System.out.print("]\n");
+        System.out.print("]"+(this.elementos.size() == 0? "": "<-Topo da pilha")+"\n");
     }
 
     public Integer gerarNumeroParaPilha(Random geradorNumeroAleatorio) {
