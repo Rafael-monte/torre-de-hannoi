@@ -1,17 +1,20 @@
 package game;
 
+import classes.DificultyController;
 import classes.Pilha;
 import classes.ScoreSetter;
+import enums.Dificuldade;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Game {
 
-    private Scanner teclado = new Scanner(System.in);
+    private final Scanner teclado = new Scanner(System.in);
 
-    private List<Pilha> pilhasJogo = new ArrayList<>();
+    private final List<Pilha> pilhasJogo = new ArrayList<>();
 
     private static Game game = null;
 
@@ -21,7 +24,9 @@ public class Game {
 
     private String nomeJogador = "";
 
-    private ScoreSetter scoreSetter = new ScoreSetter();
+    private final ScoreSetter scoreSetter = new ScoreSetter();
+
+    private final DificultyController dificultyController = new DificultyController();
 
     private Game() {
         this.perguntarQtdeEPopularPilhas();
@@ -37,6 +42,7 @@ public class Game {
 
     private void perguntarQtdeEPopularPilhas() {
         System.out.println("Bem vindo ao torre de Hanoi!");
+        this.dificultyController.setDificuldade(this.teclado);
         System.out.print("Por favor insira a quantidade de pilhas que deseja no jogo: ");
         int numeroDePilhas = this.teclado.nextInt();
         if (numeroDePilhas <= 0) {
@@ -66,9 +72,46 @@ public class Game {
 
     private void iniciarMovimentos() {
         while (!this.jogoFinalizado()) {
+            while (!this.existePilhaVaziaOuExistemToposIguais()) {
+                this.recalcularCasoJogoSejaImpossivel();
+            }
             this.realizarJogada();
         }
         this.encerrarJogo();
+    }
+
+    private void recalcularCasoJogoSejaImpossivel() {
+        if (!this.dificultyController.getDificuldadeSelecionada().equals(Dificuldade.DIFICIL)) {
+            return;
+        }
+        if (this.existePilhaVaziaOuExistemToposIguais()) {
+            return;
+        }
+
+        this.recalcularPilhasImpossiveis();
+
+    }
+
+    private void recalcularPilhasImpossiveis() {
+        this.pilhasJogo.stream().filter(pilha -> !pilha.isPilhaHomogenea()).forEach(Pilha::reordenar);
+
+    }
+
+    private boolean existePilhaVaziaOuExistemToposIguais() {
+        if (this.pilhasJogo.stream().anyMatch(Pilha::isPilhaVazia)) {
+            return true;
+        }
+
+        List<Integer> toposPilhas = this.pilhasJogo.stream().map(Pilha::elementoDoTopo).collect(Collectors.toList());
+
+        for (int i = 0; i < toposPilhas.size() - 1; i ++) {
+            for (int j = i+1; j < toposPilhas.size(); j++) {
+                if (toposPilhas.get(i).equals(toposPilhas.get(j))) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void encerrarJogo() {
@@ -130,10 +173,12 @@ public class Game {
         }
 
         //TODO: futuro modo "hard", não podendo ter o numero do topo diferente entre as duas pilhas
-//        if (!pilhaOrigem.elementoDoTopo().equals(pilhaDestino.elementoDoTopo()) && !pilhaDestino.isPilhaVazia()) {
-//            System.out.println("Os elementos das pilhas de origem e destino são diferentes! Jogue novamente!");
-//            return false;
-//        }
+        if (this.dificultyController.getDificuldadeSelecionada().equals(Dificuldade.DIFICIL)) {
+            if (!pilhaOrigem.elementoDoTopo().equals(pilhaDestino.elementoDoTopo()) && !pilhaDestino.isPilhaVazia()) {
+                System.out.println("Os elementos das pilhas de origem e destino são diferentes! Jogue novamente!");
+                return false;
+            }
+        }
 
         return true;
     }

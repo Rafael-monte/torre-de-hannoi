@@ -1,6 +1,7 @@
 package classes;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -80,9 +81,19 @@ public class Pilha {
 
     public boolean isPilhaFinalizada(int numeroElementosIguais) {
        if (this.elementos.size() == numeroElementosIguais) {
-           Integer elementoAmostra = this.elementos.get(0);
-           return this.elementos.stream().allMatch(el -> el.equals(elementoAmostra));
+           return this.isPilhaHomogenea();
        }
        return this.isPilhaVazia();
+    }
+
+    public boolean isPilhaHomogenea() {
+        Integer elementoAmostra = this.elementos.get(0);
+        return this.elementos.stream().allMatch(el -> el.equals(elementoAmostra));
+    }
+
+    public void reordenar() {
+        List<Integer> aux = this.elementos;
+        Collections.shuffle(aux);
+        this.elementos = aux;
     }
 }

@@ -1,3 +1,4 @@
+import enums.Dificuldade;
 import game.Game;
 
 public class Main {
