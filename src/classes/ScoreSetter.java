@@ -11,9 +11,7 @@ import java.util.List;
 
 public class ScoreSetter {
 
-    private PersonDetails playerDetails = new PersonDetails();
-    private List<PersonDetails> otherPlayers = new ArrayList<>();
-    private File metadataFile;
+    private final PersonDetails playerDetails = new PersonDetails();
 
     public void registrarNovoJogador(String nomePessoa, Integer numeroJogadas) {
         this.playerDetails.setNomeJogador(nomePessoa);
@@ -26,7 +24,7 @@ public class ScoreSetter {
     }
 
     private void adicionarLinhaAoScore() throws IOException {
-        this.metadataFile = new File(Path.of("src/scores/scores.md").toUri());
+        File metadataFile = new File(Path.of("src/scores/scores.md").toUri());
         FileWriter fw = new FileWriter(metadataFile, true);
         BufferedWriter bw = new BufferedWriter(fw);
         bw.write(this.playerDetails.getPlayerDetailsAsLine());

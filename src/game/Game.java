@@ -3,58 +3,44 @@ package game;
 import classes.Pilha;
 import classes.ScoreSetter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class Game {
 
-    private Scanner teclado = new Scanner(System.in);
+    private final Scanner teclado = new Scanner(System.in);
 
-    private List<Pilha> pilhasJogo = new ArrayList<>();
-
-    private static Game game = null;
+    private final List<Pilha> pilhasJogo = new ArrayList<>();
 
     private final Integer GAP_PILHAS = 2;
 
     private Integer numeroJogadas = 0;
 
-    private String nomeJogador = "";
+    private final ScoreSetter scoreSetter = new ScoreSetter();
 
-    private ScoreSetter scoreSetter = new ScoreSetter();
+    private Game() {}
 
-    private Game() {
-        this.perguntarQtdeEPopularPilhas();
-    }
-
-
-    public static Game start() {
-        if (game == null) {
-            return new Game();
-        }
-        return null;
+    public static void start() {
+        new Game().perguntarQtdeEPopularPilhas();
     }
 
     private void perguntarQtdeEPopularPilhas() {
         System.out.println("Bem vindo ao torre de Hanoi!");
         System.out.print("Por favor insira a quantidade de pilhas que deseja no jogo: ");
         int numeroDePilhas = this.teclado.nextInt();
-        if (numeroDePilhas <= 0) {
-            System.out.println("Larga a mão de ser safado, tente novamente!");
+        if (numeroDePilhas <= 1) {
+            System.out.println("Não é possível criar menos de 1 pilha. Tente novamente");
             this.perguntarQtdeEPopularPilhas();
             return;
-        } else {
-            numeroDePilhas+=(GAP_PILHAS);
         }
         System.out.print("Agora insira o tamanho das pilhas: ");
         int tamanhoPilhas = this.teclado.nextInt();
-
         if (tamanhoPilhas <= 0) {
-            System.out.println("Para de gracinha mano, tenta dnv pqp");
+            System.out.println("Não é possível colocar pilhas menores que zero. Tente novamente.");
             this.perguntarQtdeEPopularPilhas();
             return;
         }
-
         System.out.println("Gerando pilhas");
         for (int i = 0; i < numeroDePilhas; i++) {
             this.pilhasJogo.add(new Pilha(tamanhoPilhas, (i > (numeroDePilhas - (this.GAP_PILHAS + 1)))));
@@ -72,17 +58,17 @@ public class Game {
     }
 
     private void encerrarJogo() {
-        System.out.println(String.format("Parabéns, você venceu! Foram necessarias apenas %d jogadas!", this.numeroJogadas));
-        String resposta;
-        do {
+        System.out.printf("Parabéns, você venceu! Foram necessarias apenas %d jogadas!%n", this.numeroJogadas);
+        String resposta="";
+        resposta = this.teclado.nextLine();
+        while(!resposta.equalsIgnoreCase("S") && !resposta.equalsIgnoreCase("N")) {
             System.out.print("\nDeseja salvar um recorde? (S/N): ");
             resposta = this.teclado.nextLine();
         }
-        while(!resposta.equalsIgnoreCase("S") && !resposta.equalsIgnoreCase("N"));
         if (resposta.equalsIgnoreCase("S")) {
             System.out.print("\nPor favor, escreva seu nome: ");
-            this.nomeJogador = this.teclado.nextLine();
-            this.scoreSetter.registrarNovoJogador(this.nomeJogador, this.numeroJogadas);
+            String nomeJogador = this.teclado.nextLine();
+            this.scoreSetter.registrarNovoJogador(nomeJogador, this.numeroJogadas);
         }
     }
 
@@ -92,8 +78,10 @@ public class Game {
         int pilhaOrigem = this.teclado.nextInt();
         System.out.print("\nEscolha a pilha que deseja inserir: ");
         int pilhaDestino = this.teclado.nextInt();
-        if (!this.isIndicesValidos(pilhaOrigem, pilhaDestino)) {
-            System.out.println(String.format("Indice inválido! Insira um valor entre 1 e %d", pilhaDestino));
+        boolean existePilhaInvalida = Stream.of(pilhaOrigem, pilhaDestino)
+                .anyMatch(pilha->pilha < 1 || pilha > this.pilhasJogo.size());
+        if (existePilhaInvalida) {
+            System.out.printf("Indice inválido! Insira um valor entre 1 e %d%n", pilhaDestino);
             this.realizarJogada();
             return;
         }
@@ -128,13 +116,6 @@ public class Game {
             System.out.println("A pilha de destino está cheia, escolha outra!");
             return false;
         }
-
-        //TODO: futuro modo "hard", não podendo ter o numero do topo diferente entre as duas pilhas
-//        if (!pilhaOrigem.elementoDoTopo().equals(pilhaDestino.elementoDoTopo()) && !pilhaDestino.isPilhaVazia()) {
-//            System.out.println("Os elementos das pilhas de origem e destino são diferentes! Jogue novamente!");
-//            return false;
-//        }
-
         return true;
     }
 
@@ -143,9 +124,11 @@ public class Game {
     }
 
     private void printarJogo() {
-        for (int i=0; i<this.pilhasJogo.size(); i++) {
-            System.out.print("PILHA "+(i+1)+": ");
-            this.pilhasJogo.get(i).printarPilha();
+        int counter = 1;
+        for (Pilha pilha : this.pilhasJogo) {
+            System.out.printf("PILHA: %d: ", counter);
+            pilha.printarPilha();
+            counter++;
         }
     }
 

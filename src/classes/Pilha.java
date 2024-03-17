@@ -5,9 +5,8 @@ import java.util.List;
 import java.util.Random;
 
 public class Pilha {
-    private List<Integer> elementos = new ArrayList<>();
-    private Integer tamMax;
-    public final Integer PILHA_VAZIA = null;
+    private final List<Integer> elementos = new ArrayList<>();
+    private final Integer tamMax;
 
 
     public Pilha(Integer tamanhoPilha, boolean pilhaVazia) {
@@ -41,7 +40,7 @@ public class Pilha {
         Integer valorGerado;
         for (int i = 0; i < tamMax; i++) {
             do {
-                valorGerado = this.gerarNumeroParaPilha(geradorNumeroAleatorio);
+                valorGerado = geradorNumeroAleatorio.nextInt(this.tamMax);
             } while (this.elementoPresenteNaPilha(valorGerado));
             this.elementos.add(valorGerado);
         }
@@ -56,11 +55,7 @@ public class Pilha {
                 System.out.print(this.elementos.get(i));
             }
         }
-        System.out.print("]"+(this.elementos.size() == 0? "": "<-Topo da pilha")+"\n");
-    }
-
-    public Integer gerarNumeroParaPilha(Random geradorNumeroAleatorio) {
-        return geradorNumeroAleatorio.nextInt(this.tamMax);
+        System.out.print("]"+(this.elementos.isEmpty() ? "": "<-Topo da pilha")+"\n");
     }
 
     public boolean elementoPresenteNaPilha(Integer valorGerado) {
@@ -69,13 +64,6 @@ public class Pilha {
 
     public boolean isPilhaVazia() {
         return this.elementos.isEmpty();
-    }
-
-    public Integer elementoDoTopo() {
-        if (!this.isPilhaVazia()) {
-            return this.elementos.get(this.elementos.size() - 1);
-        }
-        return this.PILHA_VAZIA;
     }
 
     public boolean isPilhaFinalizada(int numeroElementosIguais) {
