@@ -39,8 +39,8 @@ public class Game {
         System.out.println("Bem vindo ao torre de Hanoi!");
         System.out.print("Por favor insira a quantidade de pilhas que deseja no jogo: ");
         int numeroDePilhas = this.teclado.nextInt();
-        if (numeroDePilhas <= 0) {
-            System.out.println("Larga a mão de ser safado, tente novamente!");
+        if (numeroDePilhas <= 1) {
+            System.out.println("Não é possível inserir menos que uma pilha. Tente novamente");
             this.perguntarQtdeEPopularPilhas();
             return;
         } else {
@@ -49,8 +49,8 @@ public class Game {
         System.out.print("Agora insira o tamanho das pilhas: ");
         int tamanhoPilhas = this.teclado.nextInt();
 
-        if (tamanhoPilhas <= 0) {
-            System.out.println("Para de gracinha mano, tenta dnv pqp");
+        if (tamanhoPilhas <= numeroJogadas) {
+            System.out.println("Não é possível pilhas com tamanho menor que zero. Tente novamente");
             this.perguntarQtdeEPopularPilhas();
             return;
         }
